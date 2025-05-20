@@ -65,7 +65,7 @@ class FeatEntropyCalibrator(trt.IInt8EntropyCalibrator2):
         if self.batch_idx < self.max_batch_idx:
             batch_files = self.imgs[self.batch_idx * self.batch_size:(self.batch_idx + 1) * self.batch_size]
             batch_imgs = np.zeros((self.batch_size, self.channel, self.height, self.width),
-                                  dtype=np.float32)
+                                  dtype=float32)
             for i, f in enumerate(batch_files):
                 img = read_image(f)
                 img = self.transform(img).numpy()

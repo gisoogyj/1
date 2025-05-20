@@ -60,30 +60,32 @@ def git_describe(path=Path(__file__).parent):  # path must be a directory
         return ''  # not a git repository
 
 
-def select_device(device='', batch_size=None):
-    # device = 'cpu' or '0' or '0,1,2,3'
-    s = f'YOLOv7 🚀 {git_describe() or date_modified()} torch {torch.__version__} '  # string
-    cpu = device.lower() == 'cpu'
-    if cpu:
-        os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # force torch.cuda.is_available() = False
-    elif device:  # non-cpu device requested
-        os.environ['CUDA_VISIBLE_DEVICES'] = device  # set environment variable
-        assert torch.cuda.is_available(), f'CUDA unavailable, invalid device {device} requested'  # check availability
+def select_device(device=''):
+    # Sanitize input
+    device = str(device).strip().lower()
+    if device == 'cpu':
+        os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+        print('Using CPU')
+        return torch.device('cpu')
+    elif device.startswith('cuda'):
+        if not torch.cuda.is_available():
+            print('[Warning] CUDA not available, using CPU instead.')
+            return torch.device('cpu')
+        
+        # Handle both 'cuda' and 'cuda:0'
+        if ':' in device:
+            gpu_id = int(device.split(':')[1])
+        else:
+            gpu_id = 0  # default first GPU
 
-    cuda = not cpu and torch.cuda.is_available()
-    if cuda:
-        n = torch.cuda.device_count()
-        if n > 1 and batch_size:  # check that batch_size is compatible with device_count
-            assert batch_size % n == 0, f'batch-size {batch_size} not multiple of GPU count {n}'
-        space = ' ' * len(s)
-        for i, d in enumerate(device.split(',') if device else range(n)):
-            p = torch.cuda.get_device_properties(i)
-            s += f"{'' if i == 0 else space}CUDA:{d} ({p.name}, {p.total_memory / 1024 ** 2}MB)\n"  # bytes to MB
+        if gpu_id >= torch.cuda.device_count():
+            raise ValueError(f"Invalid device id {gpu_id}. Only {torch.cuda.device_count()} GPUs available.")
+        
+        print(f'Using GPU: {torch.cuda.get_device_name(gpu_id)}')
+        return torch.device(f'cuda:{gpu_id}')
     else:
-        s += 'CPU\n'
-
-    logger.info(s.encode().decode('ascii', 'ignore') if platform.system() == 'Windows' else s)  # emoji-safe
-    return torch.device('cuda:0' if cuda else 'cpu')
+        print('[Warning] Unrecognized device input, using CPU.')
+        return torch.device('cpu')
 
 
 def time_synchronized():

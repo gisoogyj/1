@@ -35,7 +35,7 @@ if __name__ == '__main__':
         out['images'].append(image_info)
         # Load labels
         if os.path.isfile(os.path.join("datasets", label_path)):
-            labels0 = np.loadtxt(os.path.join("datasets", label_path), dtype=np.float32).reshape(-1, 6)
+            labels0 = np.loadtxt(os.path.join("datasets", label_path), dtype=float32).reshape(-1, 6)
             # Normalized xywh to pixel xyxy format
             labels = labels0.copy()
             labels[:, 2] = image_info['width'] * (labels0[:, 2] - labels0[:, 4] / 2)

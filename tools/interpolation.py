@@ -40,10 +40,10 @@ def dti(txt_path, save_path, n_min=25, n_dti=20):
     for seq_txt in seq_txts:
         seq_name = seq_txt.split('/')[-1]
         print(seq_name)
-        seq_data = np.loadtxt(seq_txt, dtype=np.float64, delimiter=',')
+        seq_data = np.loadtxt(seq_txt, dtype=float64, delimiter=',')
         min_id = int(np.min(seq_data[:, 1]))
         max_id = int(np.max(seq_data[:, 1]))
-        seq_results = np.zeros((1, 10), dtype=np.float64)
+        seq_results = np.zeros((1, 10), dtype=float64)
         for track_id in range(min_id, max_id + 1):
             index = (seq_data[:, 1] == track_id)
             tracklet = seq_data[index]
@@ -73,7 +73,7 @@ def dti(txt_path, save_path, n_min=25, n_dti=20):
                             frames_dti[curr_frame] = curr_bbox
                 num_dti = len(frames_dti.keys())
                 if num_dti > 0:
-                    data_dti = np.zeros((num_dti, 10), dtype=np.float64)
+                    data_dti = np.zeros((num_dti, 10), dtype=float64)
                     for n in range(num_dti):
                         data_dti[n, 0] = list(frames_dti.keys())[n]
                         data_dti[n, 1] = track_id

@@ -110,7 +110,7 @@ class RepVGGBlock(nn.Module):
             assert branch.__class__.__name__.find('BatchNorm') != -1
             if not hasattr(self, 'id_tensor'):
                 input_dim = self.in_channels // self.groups
-                kernel_value = np.zeros((self.in_channels, input_dim, 3, 3), dtype=np.float32)
+                kernel_value = np.zeros((self.in_channels, input_dim, 3, 3), dtype=float32)
                 for i in range(self.in_channels):
                     kernel_value[i, i % input_dim, 1, 1] = 1
                 self.id_tensor = torch.from_numpy(kernel_value).to(branch.weight.device)

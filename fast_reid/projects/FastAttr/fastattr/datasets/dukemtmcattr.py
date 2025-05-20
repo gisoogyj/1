@@ -68,7 +68,7 @@ class DukeMTMCAttr(Dataset):
             assert 1 <= camid <= 8
 
             img_index = annotation['image_index'].index(str(pid).zfill(4))
-            attrs = np.array([int(annotation[i][img_index]) - 1 for i in sorted_attrs], dtype=np.float32)
+            attrs = np.array([int(annotation[i][img_index]) - 1 for i in sorted_attrs], dtype=float32)
             data.append((img_path, attrs))
 
         return data

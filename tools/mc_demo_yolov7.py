@@ -1,3 +1,9 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import os
+os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+
 import argparse
 import time
 from pathlib import Path
@@ -100,7 +106,7 @@ def detect(save_img=False):
         pred = model(img, augment=opt.augment)[0]
 
         # Apply NMS
-        pred = non_max_suppression(pred, opt.conf_thres, opt.iou_thres, classes=opt.classes, agnostic=opt.agnostic_nms)
+        pred = non_max_suppression(pred, opt.conf_thres, opt.iou_thres, classes=[0], agnostic=opt.agnostic_nms)
         t2 = time_synchronized()
 
         # Apply Classifier

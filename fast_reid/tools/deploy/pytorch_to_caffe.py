@@ -545,8 +545,8 @@ def _add(input, *args):
                                        bottom=[log.blobs(input)], top=[log.blobs(x)])
         dim = x.shape[1]
         layer.param.scale_param.bias_term = True
-        weight = np.ones(dim, dtype=np.float32)
-        bias = args[0] * np.ones(dim, dtype=np.float32)
+        weight = np.ones(dim, dtype=float32)
+        bias = args[0] * np.ones(dim, dtype=float32)
         layer.add_data(weight, bias)
         log.cnet.add_layer(layer)
         return x
